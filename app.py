@@ -5,6 +5,7 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendM
 import json
 import os
 import sqlite3
+from sqlite3 import Error
 from datetime import datetime
 
 app = Flask(__name__)
