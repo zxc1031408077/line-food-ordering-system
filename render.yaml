@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: line-bot-ordering-system
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: LINE_CHANNEL_ACCESS_TOKEN
+        fromSecret: LINE_CHANNEL_ACCESS_TOKEN
+      - key: LINE_CHANNEL_SECRET
+        fromSecret: LINE_CHANNEL_SECRET
