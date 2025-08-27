@@ -21,50 +21,52 @@ handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
 # 初始化資料庫
 def init_db():
-    conn = sqlite3.connect('orders.db')
-    c = conn.cursor()
-    
-    # 創建訂單表
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS orders (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id TEXT,
-            items TEXT,
-            total REAL,
-            status TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    
-    # 創建菜單表
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS menu (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            price REAL,
-            description TEXT,
-            image_url TEXT,
-            category TEXT,
-            available INTEGER DEFAULT 1
-        )
-    ''')
-    
-    # 插入示例菜單數據
-    c.execute("SELECT COUNT(*) FROM menu")
-    if c.fetchone()[0] == 0:
-        sample_menu = [
-            ("Arm Chair, White", 49.99, "舒適的白色扶手椅", "https://developers-resource.landpress.line.me/fx/img/01_5_carousel.png", "家具", 1),
-            ("Metal Desk Lamp", 11.99, "金屬桌燈", "https://developers-resource.landpress.line.me/fx/img/01_6_carousel.png", "燈具", 1),
-            ("Energy Drink", 2.99, "提神飲料", "https://example.com/energy_drink.jpg", "飲料", 1),
-            ("Chewing Gum", 0.99, "口香糖", "https://example.com/gum.jpg", "零食", 1),
-            ("Bottled Water", 3.33, "瓶裝水", "https://example.com/water.jpg", "飲料", 1)
-        ]
-        c.executemany("INSERT INTO menu (name, price, description, image_url, category, available) VALUES (?, ?, ?, ?, ?, ?)", sample_menu)
-    
-    conn.commit()
-    conn.close()
-
-init_db()
+    try:
+        conn = sqlite3.connect('orders.db')
+        c = conn.cursor()
+        
+        # 創建訂單表
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS orders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id TEXT,
+                items TEXT,
+                total REAL,
+                status TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # 創建菜單表
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS menu (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                price REAL,
+                description TEXT,
+                image_url TEXT,
+                category TEXT,
+                available INTEGER DEFAULT 1
+            )
+        ''')
+        
+        # 插入示例菜單數據
+        c.execute("SELECT COUNT(*) FROM menu")
+        if c.fetchone()[0] == 0:
+            sample_menu = [
+                ("Arm Chair, White", 49.99, "舒適的白色扶手椅", "https://developers-resource.landpress.line.me/fx/img/01_5_carousel.png", "家具", 1),
+                ("Metal Desk Lamp", 11.99, "金屬桌燈", "https://developers-resource.landpress.line.me/fx/img/01_6_carousel.png", "燈具", 1),
+                ("Energy Drink", 2.99, "提神飲料", "https://example.com/energy_drink.jpg", "飲料", 1),
+                ("Chewing Gum", 0.99, "口香糖", "https://example.com/gum.jpg", "零食", 1),
+                ("Bottled Water", 3.33, "瓶裝水", "https://example.com/water.jpg", "飲料", 1)
+            ]
+            c.executemany("INSERT INTO menu (name, price, description, image_url, category, available) VALUES (?, ?, ?, ?, ?, ?)", sample_menu)
+        
+        conn.commit()
+        conn.close()
+        print("資料庫初始化成功")
+    except Error as e:
+        print(f"資料庫初始化錯誤: {e}")
 
 # LINE Webhook 處理
 @app.route("/callback", methods=['POST'])
